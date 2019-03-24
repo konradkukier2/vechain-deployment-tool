@@ -10,6 +10,10 @@
   width: 380px;
 }
 
+.app-container > p {
+  margin-bottom: 4px;
+}
+
 .error {
   color: #d50000;
 }

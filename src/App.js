@@ -32,7 +32,9 @@ class App extends Component {
         </header>
         <main className="app-container" style={{ margin: 16 }}>
           <h5>Vechain Smart Contract deployment tool</h5>
-          <p>Simply insert your Solidity smart contract code, [compile] it, hit [deploy] button and.. thats it!</p>
+          <p>a) Insert smart contract code -> Compile -> Deploy</p>
+          <p>b) Insert already compiled code -> Deploy</p>
+          <p>Compiler version: 0.5.4 (solc)</p>
           <div className="mdl-textfield mdl-js-textfield">
             <textarea className="mdl-textfield__input" type="text" rows= "4" id="sample5" ref={this.contractCode}></textarea>
             <label className="mdl-textfield__label" htmlFor="sample5">Smart contract code</label>
