@@ -7,6 +7,11 @@ class App extends Component {
 
   constructor() {
     super();
+
+    if (!window.connex) {
+        window.location.href = 'https://env.vechain.org/r/#' + encodeURIComponent(window.location.href)
+    }
+
     this.contractCode = React.createRef();
     this.contractAbi = React.createRef();
     this.contractCompiled = React.createRef();
@@ -116,7 +121,7 @@ class App extends Component {
     if (!output.contracts && output.errors.length) {
       console.error(output);
       this.setState({
-        error: output.errors[0].message,
+        compileError: output.errors[0].message,
       });
     } else {
       const contractName = Object.keys(output.contracts[PLACEHOLDER])[0];
@@ -129,7 +134,7 @@ class App extends Component {
       this.contractAbi.current.parentNode.classList.add('is-dirty');
       this.contractCompiled.current.parentNode.classList.add('is-dirty');
       this.setState({
-        error: '',
+        compileError: '',
       });
     }
 
@@ -151,7 +156,7 @@ class App extends Component {
         data: '0x' + this.contractCompiled.current.value
       }
     ]).then(result => {
-      this.setState({ tx: result.txid });
+      this.setState({ tx: result.txid, deploymentError: '' });
       if (this.openTx) {
         this.openTx.current.scrollIntoView({ behavior: 'smooth'});
       }
