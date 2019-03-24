@@ -1,10 +1,12 @@
 ## Vechain Smart Contract deployment tool ##
 
-1) `yarn install` or `npm install`
+1) `npm install`
 
-2) `yarn start` or `npm run start`
+2) `npm run start`
 
-3) Insert your solidity smart contract code, and press `[compile]` - this will provide and autofill contract ABI and bytecode
+3) Insert your solidity smart contract code and press `[compile]` - this will provide and autofill contract ABI and bytecode
+
+NOTE: If you need another compiler, you can simply paste alrady compiled code (bytecode) and go straight to deployment part
 
 4) Hit `[deploy]` button and.. thats it!
 
