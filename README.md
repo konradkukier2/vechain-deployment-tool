@@ -8,4 +8,4 @@
 
 4) Hit `[deploy]` button and.. thats it!
 
-![Deployment tool](https://i.postimg.cc/rFTqTcwR/deploy-tool.png)
+![Deployment tool](https://media.giphy.com/media/fo2gVWO4kLhtjNO8BU/giphy.gif)
