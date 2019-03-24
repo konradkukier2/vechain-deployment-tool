@@ -4,4 +4,8 @@
 
 2) `yarn start` or `npm run start`
 
-![Deployment tool](https://i.postimg.cc/rFTqTcwR/deploy-tool.png)
+3) Insert your solidity smart contract code, and press `[compile]` - this will provide and autofill contract ABI and bytecode
+
+4) Hit `[deploy]` button and.. thats it!
+
+![Deployment tool](https://media.giphy.com/media/fo2gVWO4kLhtjNO8BU/giphy.gif)
