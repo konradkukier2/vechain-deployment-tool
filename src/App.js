@@ -15,7 +15,7 @@ class App extends Component {
   }
 
   state = {
-    error: '',
+    compileError: '',
     deploymentError: '',
     tx: '',
   }
@@ -34,7 +34,7 @@ class App extends Component {
           </div>
 
           {
-            this.state.error ? <p className="error">{this.state.error} (check console for details)</p> : null
+            this.state.compileError ? <p className="error">{this.state.compileError} (check console for details)</p> : null
           }
 
           <button style={{ color: 'white' }} onClick={this.compile} className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary">
@@ -57,7 +57,7 @@ class App extends Component {
           </div>
 
           <button
-            disabled={this.state.error}
+            disabled={this.state.compileError}
             style={{ color: 'white' }}
             onClick={this.deploy}
             className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary"

@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Vechain deployment tool",
+  "name": "Vechain deployment tool",
   "icons": [
     {
       "src": "favicon.ico",
