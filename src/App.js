@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
-// import { thorify } from "thorify";
 import './App.css';
 import * as wrapper from 'solc/wrapper';
-const solc = wrapper(window.Module)
-// const Web3 = require("web3"); // Its recommended to use require instead of import
-// const web3 = thorify(new Web3(), "http://localhost:8669");
+const solc = wrapper(window.Module);
 
 class App extends Component {
 
@@ -146,7 +143,6 @@ class App extends Component {
     }
 
     signingService.comment('Deploy your smart contract');
-    signingService.link('https://connex.vecha.in/{txid}')
 
     signingService.request([
       {
@@ -163,12 +159,9 @@ class App extends Component {
       console.error(error);
       this.setState({
         deploymentError: 'Something went wrong while deploying'
-      })
+      });
     });
   }
-
-
-
 
 }
 
