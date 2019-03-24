@@ -1,28 +1,175 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+// import { thorify } from "thorify";
 import './App.css';
+import * as wrapper from 'solc/wrapper';
+const solc = wrapper(window.Module)
+// const Web3 = require("web3"); // Its recommended to use require instead of import
+// const web3 = thorify(new Web3(), "http://localhost:8669");
 
 class App extends Component {
+
+  constructor() {
+    super();
+    this.contractCode = React.createRef();
+    this.contractAbi = React.createRef();
+    this.contractCompiled = React.createRef();
+    this.maxGas = React.createRef();
+    this.openTx = React.createRef();
+  }
+
+  state = {
+    error: '',
+    deploymentError: '',
+    tx: '',
+  }
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
+      <div className="app">
+        <header className="app-header">
         </header>
+        <main className="app-container" style={{ margin: 16 }}>
+          <h5>Vechain Smart Contract deployment tool</h5>
+          <p>Simply insert your Solidity smart contract code, [compile] it, hit [deploy] button and.. thats it!</p>
+          <div className="mdl-textfield mdl-js-textfield">
+            <textarea className="mdl-textfield__input" type="text" rows= "4" id="sample5" ref={this.contractCode}></textarea>
+            <label className="mdl-textfield__label" htmlFor="sample5">Smart contract code</label>
+          </div>
+
+          {
+            this.state.error ? <p className="error">{this.state.error} (check console for details)</p> : null
+          }
+
+          <button style={{ color: 'white' }} onClick={this.compile} className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary">
+            Compile
+          </button>
+
+          <div className="mdl-textfield mdl-js-textfield">
+            <textarea className="mdl-textfield__input" type="text" rows= "4" id="abi" ref={this.contractAbi}></textarea>
+            <label className="mdl-textfield__label" htmlFor="abi">Contract Abi</label>
+          </div>
+
+          <div className="mdl-textfield mdl-js-textfield">
+            <textarea className="mdl-textfield__input" type="text" rows= "4" id="bin" ref={this.contractCompiled}></textarea>
+            <label className="mdl-textfield__label" htmlFor="bin">Contract Bytecode</label>
+          </div>
+
+          <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input className="mdl-textfield__input" type="text" id="gas" ref={this.maxGas} />
+            <label className="mdl-textfield__label" htmlFor="gas">Set maximum gas (optional)</label>
+          </div>
+
+          <button
+            disabled={this.state.error}
+            style={{ color: 'white' }}
+            onClick={this.deploy}
+            className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary"
+          >
+            Deploy
+          </button>
+
+          {
+            this.state.deploymentError ? <p className="error">{this.state.deploymentError} (check console for details)</p> : null
+          }
+
+          {
+            this.state.tx ?
+            <div className="transaction-info">
+              <span>Transaction sent</span>
+              <button
+                style={{ color: 'white' }}
+                className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary"
+                onClick={this.goToInsight}
+                ref={this.openTx}
+              >
+                Open TX
+              </button>
+            </div> : null
+          }
+
+        </main>
       </div>
     );
   }
+
+  goToInsight = () => {
+    const url = `https://insight.vecha.in/#/txs/${this.state.tx}`;
+    window.open(url, '_blank');
+  }
+
+  compile = () => {
+    const PLACEHOLDER = 'PLACEHOLDER';
+    const contractCode = this.contractCode.current.value;
+
+    const input = {
+      language: 'Solidity',
+      sources: {
+          [PLACEHOLDER]: {
+              content: contractCode
+          }
+      },
+      settings: {
+          outputSelection: { '*': { '*': [ '*' ] } }
+      }
+    }
+
+    // compile
+    const output = JSON.parse(solc.compile(JSON.stringify(input)));
+
+    if (!output.contracts && output.errors.length) {
+      console.error(output);
+      this.setState({
+        error: output.errors[0].message,
+      });
+    } else {
+      const contractName = Object.keys(output.contracts[PLACEHOLDER])[0];
+
+      // fill compiled data
+      this.contractAbi.current.value = JSON.stringify(output.contracts.PLACEHOLDER[contractName].abi);
+      this.contractCompiled.current.value = output.contracts.PLACEHOLDER[contractName].evm.bytecode.object;
+
+      // label fix
+      this.contractAbi.current.parentNode.classList.add('is-dirty');
+      this.contractCompiled.current.parentNode.classList.add('is-dirty');
+      this.setState({
+        error: '',
+      });
+    }
+
+  }
+
+  deploy = () => {
+    const signingService = window.connex.vendor.sign('tx');
+
+    if (this.maxGas.current.value) {
+      signingService.gas(Number(this.maxGas.current.value));
+    }
+
+    signingService.comment('Deploy your smart contract');
+    signingService.link('https://connex.vecha.in/{txid}')
+
+    signingService.request([
+      {
+        to: null,
+        value: null,
+        data: '0x' + this.contractCompiled.current.value
+      }
+    ]).then(result => {
+      this.setState({ tx: result.txid });
+      if (this.openTx) {
+        this.openTx.current.scrollIntoView({ behavior: 'smooth'});
+      }
+    }).catch(error => {
+      console.error(error);
+      this.setState({
+        deploymentError: 'Something went wrong while deploying'
+      })
+    });
+  }
+
+
+
+
 }
 
 export default App;
